@@ -1,0 +1,141 @@
+
+
+
+#************* drop tables *******************
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS Appointment;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS HealthcarePlan;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS Address;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS Patient;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS TreatmentType;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS Staff;
+SET FOREIGN_KEY_CHECKS=1;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS TreatmentCredits;
+SET FOREIGN_KEY_CHECKS=1;
+
+
+
+#************* create tables ******************
+
+
+
+create table Address (
+  id INT NOT NULL AUTO_INCREMENT,
+  houseNumber VARCHAR(30),
+  streetName VARCHAR(30),
+  districtName VARCHAR(30),
+  city VARCHAR(30),
+  postcode VARCHAR(30),
+  PRIMARY KEY(id)
+);
+
+create table HealthcarePlan (
+  name VARCHAR(30) NOT NULL,
+  cost INT,
+  checkUpCredits INT,
+  hygieneCredits INT,
+  repairCredits INT,
+  PRIMARY KEY(name)
+  );
+
+create table Patient (
+  id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(20),
+  forename VARCHAR(20),
+  surname VARCHAR(20),
+  dob VARCHAR(6),
+  phone VARCHAR(20),
+  addr_ID INT,
+  healthcarePlan VARCHAR(30),
+  PRIMARY KEY(id),
+  FOREIGN KEY (addr_ID) REFERENCES Address(id),
+  FOREIGN KEY (healthcarePlan) REFERENCES HealthcarePlan(name)
+  );
+
+create table Staff (
+  id INT NOT NULL AUTO_INCREMENT,
+  staffForename VARCHAR(20),
+  staffSurname VARCHAR(20),
+  job VARCHAR(20),
+  PRIMARY KEY(id)
+);
+
+create table TreatmentType(
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(30),
+  cost INT,
+  staffID INT,
+  length INT, 
+  PRIMARY KEY (id),
+  FOREIGN KEY (staffID) REFERENCES Staff(id)
+  );
+  
+create table TreatmentCredits (
+  id INT NOT NULL AUTO_INCREMENT,
+  patientID INT,
+  checkUpCredits INT,
+  hygieneCredits INT,
+  repairCredits INT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (patientID) REFERENCES Patient(id)
+  );
+
+create table Appointment(
+  id INT NOT NULL AUTO_INCREMENT, 
+  date DATETIME, 
+  staffID INT, 
+  patientID INT, 
+  treatmentID INT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (staffID) REFERENCES Staff(id),
+  FOREIGN KEY (patientID) REFERENCES Patient(id), 
+   FOREIGN KEY (treatmentID) REFERENCES TreatmentType(id)
+   );
+
+
+ #****************** Insert health care plans ****************
+
+INSERT INTO HealthcarePlan (name, cost, checkUpCredits, hygieneCredits, repairCredits)
+VALUES 
+('NHS FREE PLAN', 0, 2, 2, 6),
+('Maintenance', 15, 2, 2 , 0),
+('Oral', 21, 2, 4, 0),
+('Dental Repair', 36, 2, 2, 2);
+
+#********************* Insert staff members ********************
+
+INSERT INTO Staff (staffForename, staffSurname, job) VALUES
+('Dale','Cooper','Dentist'),
+('Laura','Palmer','Hygienist'),
+('Lucy','Brennan','Secretary');
+
+********************** Insert treatment types *******************
+
+INSERT INTO TreatmentType (name, cost, staffID, length) VALUES
+('Check-up','45','1','20'),
+('Hygiene','45','2', '20'),
+('Silver amalgam filling','90','1', '60'),
+('White composite resin filling','150','1','60'),
+('Gold crown fitting','500','1', '60');
+
+
+******************* First query *******************
+
